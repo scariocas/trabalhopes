@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Reservas - Hotel ByGirls</title>
+    <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+
+<div class="container container-large">
+    <h1>Hotel ByGirls</h1>
+    <h2>Consulta de Reservas</h2>
+
+    {% if mensagem_erro %}
+        <div class="mensagem-erro">
+            {{ mensagem_erro }}
+        </div>
+    {% endif %}
+
+    {% if reservas %}
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Hóspede</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Hóspedes</th>
+                        <th>Crianças</th>
+                        <th>Quarto</th>
+                        <th>Diária</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reservas %}
+                    <tr>
+                        <td>{{ r.nome }}</td>
+                        <td>{{ r.checkin.strftime('%d/%m/%Y') if r.checkin else r.checkin }}</td>
+                        <td>{{ r.checkout.strftime('%d/%m/%Y') if r.checkout else r.checkout }}</td>
+                        <td>{{ r.hospedes }}</td>
+                        <td>{{ r.criancas }}</td>
+                        <td>{{ r.quarto }}</td>
+                        <td>R$ {{ "%.2f"|format(r.valorDiaria)|replace('.', ',') }}</td>
+                        <td>R$ {{ "%.2f"|format(r.valorTotal)|replace('.', ',') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="subtitulo">Nenhuma reserva cadastrada.</p>
+    {% endif %}
+
+    <div class="button-container">
+        <a href="/cadreserva" class="menu-button">Nova Reserva</a>
+        <a href="/" class="menu-button">Voltar ao Menu</a>
+    </div>
+</div>
+
+</body>
+</html>

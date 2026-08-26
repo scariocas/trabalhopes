@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Usuário - Hotel ByGirls</title>
+  <link rel="stylesheet" href="/static/estilo.css">
+</head>
+<body>
+
+    <div class="container">
+
+        <h1>Cadastro de Usuário</h1>
+
+        <form action="/usuario" method="POST">
+
+            <div class="form-row">
+                <label>Nome</label>
+                <input type="text" name="nome" placeholder="Nome Completo" required>
+            </div>
+
+            <div class="form-row">
+           <label>CPF</label>
+           <input
+                   type="text"
+                  name="cpf"
+                  placeholder="Somente números"
+                   maxlength="11"
+                  inputmode="numeric"
+                   required>
+            </div>
+
+           <div class="form-row">
+          <label>Telefone</label>
+          <input
+          type="text"
+          name="telefone"
+          placeholder="Ex.: 21987654321"
+          maxlength="11"
+          pattern="[0-9]{11}"
+          inputmode="numeric"
+          oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+          required>
+          </div>
+
+            <div class="form-row">
+                <label>E-mail</label>
+                <input type="email" name="email" placeholder="E-mail" required>
+            </div>
+
+            <div class="form-row">
+                <label>Senha</label>
+                <input type="password" name="senha" placeholder="Senha" required>
+            </div>
+
+            <div class="form-row">
+                <label>Confirmar senha</label>
+                <input type="password" name="confirmarSenha" placeholder="Confirmar Senha" required>
+            </div>
+
+            <div class="button-container">
+                <button type="submit">Cadastrar</button>
+                <a href="/" class="menu-button">Voltar ao Menu</a>
+            </div>
+
+            {% if mensagem_sucesso %}
+                <div class="mensagem-sucesso">
+                    {{ mensagem_sucesso }}
+                </div>
+            {% endif %}
+
+            {% if mensagem_erro %}
+                <div class="mensagem-erro">
+                    {{ mensagem_erro }}
+                </div>
+            {% endif %}
+
+        </form>
+
+    </div>
+
+</body>
+</html>

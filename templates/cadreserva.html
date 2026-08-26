@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Reserva - Hotel ByGirls</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/estilo.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Hotel ByGirls</h1>
+
+    <h2>Cadastro de Reserva</h2>
+
+    <form
+        action="/cadreserva"
+        method="POST"
+        id="formReserva">
+
+        <div class="form-row">
+
+            <label for="checkin">
+                Data de Check-in
+            </label>
+
+            <input
+                type="date"
+                id="checkin"
+                name="checkin"
+                required>
+
+        </div>
+
+
+        <div class="form-row">
+
+            <label for="checkout">
+                Data de Check-out
+            </label>
+
+            <input
+                type="date"
+                id="checkout"
+                name="checkout"
+                required>
+
+        </div>
+
+
+        <div class="form-row">
+
+            <label for="hospedes">
+                Quantidade de Hóspedes
+            </label>
+
+            <input
+                type="number"
+                name="hospedes"
+                id="hospedes"
+                min="1"
+                max="10"
+                placeholder="Número de hóspedes"
+                required>
+
+        </div>
+
+
+        <div class="form-row">
+
+            <label for="temCriancas">
+                Há crianças na reserva?
+            </label>
+
+            <select
+                id="temCriancas"
+                name="temCriancas"
+                required>
+
+                <option value="nao">
+                    Não
+                </option>
+
+                <option value="sim">
+                    Sim
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div
+            class="form-row"
+            id="campoQuantidadeCriancas"
+            style="display:none;">
+
+            <label for="quantidadeCriancas">
+                Quantidade de crianças
+            </label>
+
+            <input
+                type="number"
+                id="quantidadeCriancas"
+                name="quantidadeCriancas"
+                min="1"
+                max="10"
+                placeholder="Quantidade de crianças">
+
+        </div>
+
+
+        <div
+            id="idadesCriancas"
+            class="form-row"
+            style="display:none;">
+
+            <label>
+                Idade de cada criança
+            </label>
+
+            <div id="camposIdades"></div>
+
+        </div>
+
+
+        <!--
+            Este campo é utilizado pela rota Flask.
+            As idades serão colocadas aqui pelo JavaScript
+            no formato: 5,8,12
+        -->
+
+        <input
+            type="hidden"
+            id="idadesCriancasHidden"
+            name="idadesCriancas"
+            value="">
+
+
+        <div class="form-row">
+
+            <label for="quarto">
+                Opções de Hospedagem
+            </label>
+
+            <select
+                id="quarto"
+                name="quarto"
+                required>
+
+                <option value="">
+                    Informe as datas e a quantidade de hóspedes
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-row">
+
+            <label for="valorDiariaVisual">
+                Valor da diária
+            </label>
+
+            <input
+                type="text"
+                id="valorDiariaVisual"
+                readonly
+                placeholder="Selecione uma hospedagem">
+
+            <input
+                type="hidden"
+                id="valorDiaria"
+                name="valorDiaria">
+
+        </div>
+
+
+        <div class="form-row">
+
+            <label for="valorTotalVisual">
+                Valor Total da Hospedagem
+            </label>
+
+            <input
+                type="text"
+                id="valorTotalVisual"
+                readonly
+                placeholder="Selecione uma hospedagem">
+
+            <input
+                type="hidden"
+                id="valorTotal"
+                name="valorTotal">
+
+        </div>
+
+
+        <div class="form-row">
+
+            <label for="observacoes">
+                Observações
+            </label>
+
+            <textarea
+                id="observacoes"
+                name="observacoes"
+                rows="4"
+                placeholder="Ex.: cama de casal, quarto silencioso, acessibilidade..."></textarea>
+
+        </div>
+
+
+        <div class="button-container">
+
+            <button
+                type="submit"
+                id="btnConfirmar"
+                disabled>
+
+                Confirmar Reserva
+
+            </button>
+
+            <a
+                href="/"
+                class="menu-button">
+
+                Voltar ao Menu
+
+            </a>
+
+        </div>
+
+
+        {% if mensagem_sucesso %}
+
+        <div class="mensagem-sucesso">
+
+            {{ mensagem_sucesso }}
+
+        </div>
+
+        {% endif %}
+
+
+        {% if mensagem_erro %}
+
+        <div class="mensagem-erro">
+
+            {{ mensagem_erro }}
+
+        </div>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+
+<script>
+
+const hospedes =
+    document.getElementById("hospedes");
+
+const quarto =
+    document.getElementById("quarto");
+
+const checkin =
+    document.getElementById("checkin");
+
+const checkout =
+    document.getElementById("checkout");
+
+const valorDiaria =
+    document.getElementById("valorDiaria");
+
+const valorDiariaVisual =
+    document.getElementById("valorDiariaVisual");
+
+const valorTotal =
+    document.getElementById("valorTotal");
+
+const valorTotalVisual =
+    document.getElementById("valorTotalVisual");
+
+const btnConfirmar =
+    document.getElementById("btnConfirmar");
+
+const temCriancas =
+    document.getElementById("temCriancas");
+
+const quantidadeCriancas =
+    document.getElementById("quantidadeCriancas");
+
+const campoQuantidadeCriancas =
+    document.getElementById("campoQuantidadeCriancas");
+
+const idadesCriancas =
+    document.getElementById("idadesCriancas");
+
+const camposIdades =
+    document.getElementById("camposIdades");
+
+const idadesCriancasHidden =
+    document.getElementById("idadesCriancasHidden");
+
+let precoDiaria = 0;
+
+let quantidadeCriancasPagantes = 0;
+
+
+/* ================================
+   CRIANÇAS
+================================ */
+
+temCriancas.addEventListener("change", function() {
+
+    if (this.value === "sim") {
+
+        campoQuantidadeCriancas.style.display = "flex";
+
+        quantidadeCriancas.required = true;
+
+    } else {
+
+        campoQuantidadeCriancas.style.display = "none";
+
+        idadesCriancas.style.display = "none";
+
+        quantidadeCriancas.required = false;
+
+        quantidadeCriancas.value = "";
+
+        camposIdades.innerHTML = "";
+
+        idadesCriancasHidden.value = "";
+
+        quantidadeCriancasPagantes = 0;
+
+    }
+
+    atualizarPreco();
+
+});
+
+
+quantidadeCriancas.addEventListener("input", function() {
+
+    const quantidade =
+        Number(this.value);
+
+    camposIdades.innerHTML = "";
+
+    idadesCriancasHidden.value = "";
+
+    quantidadeCriancasPagantes = 0;
+
+
+    if (quantidade <= 0) {
+
+        idadesCriancas.style.display = "none";
+
+        atualizarPreco();
+
+        return;
+
+    }
+
+
+    idadesCriancas.style.display = "flex";
+
+
+    for (
+        let i = 1;
+        i <= quantidade;
+        i++
+    ) {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "form-row";
+
+
+        const label =
+            document.createElement("label");
+
+        label.textContent =
+            "Idade da criança " + i;
+
+
+        const input =
+            document.createElement("input");
+
+        input.type = "number";
+
+        input.className = "idade-crianca";
+
+        input.min = "0";
+
+        input.max = "17";
+
+        input.required = true;
+
+        input.placeholder =
+            "Idade em anos";
+
+
+        input.addEventListener(
+            "input",
+            function() {
+
+                atualizarIdadesHidden();
+
+                atualizarPreco();
+
+            }
+        );
+
+
+        div.appendChild(label);
+
+        div.appendChild(input);
+
+        camposIdades.appendChild(div);
+
+    }
+
+    atualizarIdadesHidden();
+
+    atualizarPreco();
+
+});
+
+
+/*
+    Junta todas as idades em uma única variável.
+
+    Exemplo:
+
+    criança 1 = 5
+    criança 2 = 8
+    criança 3 = 12
+
+    Envia para o Flask:
+
+    idadesCriancas = "5,8,12"
+*/
+
+function atualizarIdadesHidden() {
+
+    const campos =
+        document.querySelectorAll(
+            ".idade-crianca"
+        );
+
+    const idades = [];
+
+    campos.forEach(function(input) {
+
+        if (input.value !== "") {
+
+            idades.push(
+                input.value
+            );
+
+        }
+
+    });
+
+    idadesCriancasHidden.value =
+        idades.join(",");
+
+}
+
+
+/* ================================
+   CRIANÇAS PAGANTES
+================================ */
+
+function contarCriancasPagantes() {
+
+    const idades =
+        document.querySelectorAll(
+            ".idade-crianca"
+        );
+
+    let pagantes = 0;
+
+    idades.forEach(function(input) {
+
+        if (input.value !== "") {
+
+            const idade =
+                Number(input.value);
+
+            if (idade > 5) {
+
+                pagantes++;
+
+            }
+
+        }
+
+    });
+
+    return pagantes;
+
+}
+
+
+/* ================================
+   ATUALIZA PREÇO
+================================ */
+
+function atualizarPreco() {
+
+    const pessoas =
+        Number(hospedes.value);
+
+    const criancasPagantes =
+        contarCriancasPagantes();
+
+    quantidadeCriancasPagantes =
+        criancasPagantes;
+
+
+    atualizarIdadesHidden();
+
+
+    if (pessoas <= 0) {
+
+        return;
+
+    }
+
+
+    carregarOpcoes();
+
+}
+
+
+/* ================================
+   CARREGAR QUARTOS
+================================ */
+
+async function carregarOpcoes() {
+    const pessoas = Number(hospedes.value);
+    const entrada = checkin.value;
+    const saida = checkout.value;
+    const qtdCriancas = temCriancas.value === "sim" ? Number(quantidadeCriancas.value || 0) : 0;
+
+    quarto.innerHTML = "";
+    valorDiaria.value = "";
+    valorDiariaVisual.value = "";
+    valorTotal.value = "";
+    valorTotalVisual.value = "";
+    precoDiaria = 0;
+    btnConfirmar.disabled = true;
+
+    if (pessoas <= 0 || entrada === "" || saida === "") {
+        quarto.innerHTML = '<option value="">Informe as datas e a quantidade de hóspedes</option>';
+        return;
+    }
+
+    if (saida <= entrada) {
+        quarto.innerHTML = '<option value="">O check-out deve ser posterior ao check-in</option>';
+        return;
+    }
+
+    quarto.innerHTML = '<option value="">Verificando disponibilidade...</option>';
+
+    try {
+        const idades = idadesCriancasHidden.value;
+
+        // PARÂMETRO criancas ADICIONADO NA URL ABAIXO:
+        const resposta = await fetch(
+            `/api/opcoes-quartos?checkin=${encodeURIComponent(entrada)}&checkout=${encodeURIComponent(saida)}&hospedes=${encodeURIComponent(pessoas)}&criancas=${encodeURIComponent(qtdCriancas)}&idades=${encodeURIComponent(idades)}`
+        );
+
+        if (!resposta.ok) {
+            throw new Error("Erro HTTP: " + resposta.status);
+        }
+
+        const dados = await resposta.json();
+        quarto.innerHTML = "";
+
+        if (!dados.sucesso) {
+            quarto.innerHTML = `<option value="">${dados.mensagem || "Erro ao consultar quartos."}</option>`;
+            return;
+        }
+
+        if (!dados.opcoes || dados.opcoes.length === 0) {
+            quarto.innerHTML = '<option value="">Não há quartos disponíveis para essas datas.</option>';
+            return;
+        }
+
+        const primeira = document.createElement("option");
+        primeira.value = "";
+        primeira.textContent = "Selecione uma opção de hospedagem";
+        quarto.appendChild(primeira);
+
+        dados.opcoes.forEach(function(opcao) {
+            const option = document.createElement("option");
+            option.value = opcao.descricao;
+            option.dataset.preco = opcao.preco;
+            option.textContent = `${opcao.descricao} - R$ ${Number(opcao.preco).toFixed(2).replace(".", ",")}/dia`;
+            quarto.appendChild(option);
+        });
+
+    } catch (erro) {
+        console.error("Erro ao consultar disponibilidade:", erro);
+        quarto.innerHTML = '<option value="">Erro ao consultar disponibilidade</option>';
+    }
+}
+
+/* ================================
+   EVENTOS
+================================ */
+
+hospedes.addEventListener(
+    "input",
+    carregarOpcoes
+);
+
+
+checkin.addEventListener(
+    "change",
+    carregarOpcoes
+);
+
+
+checkout.addEventListener(
+    "change",
+    carregarOpcoes
+);
+
+
+/* ================================
+   SELEÇÃO DO QUARTO
+================================ */
+
+quarto.addEventListener(
+    "change",
+    function() {
+
+        const opcao =
+            this.options[this.selectedIndex];
+
+
+        if (
+            !opcao ||
+            !opcao.dataset.preco
+        ) {
+
+            precoDiaria = 0;
+
+            valorDiaria.value = "";
+
+            valorDiariaVisual.value = "";
+
+            valorTotal.value = "";
+
+            valorTotalVisual.value = "";
+
+            btnConfirmar.disabled = true;
+
+            return;
+
+        }
+
+
+        precoDiaria =
+            Number(opcao.dataset.preco);
+
+
+        valorDiaria.value =
+            precoDiaria.toFixed(2);
+
+
+        valorDiariaVisual.value =
+            "R$ " +
+            precoDiaria
+                .toFixed(2)
+                .replace(".", ",") +
+            "/dia";
+
+
+        calcularTotal();
+
+    }
+);
+
+
+/* ================================
+   CALCULAR TOTAL
+================================ */
+
+function calcularTotal() {
+
+    if (
+        checkin.value === "" ||
+        checkout.value === "" ||
+        precoDiaria <= 0
+    ) {
+
+        valorTotal.value = "";
+
+        valorTotalVisual.value = "";
+
+        btnConfirmar.disabled = true;
+
+        return;
+
+    }
+
+
+    const dataEntrada =
+        new Date(
+            checkin.value +
+            "T00:00:00"
+        );
+
+
+    const dataSaida =
+        new Date(
+            checkout.value +
+            "T00:00:00"
+        );
+
+
+    const tempo =
+        dataSaida -
+        dataEntrada;
+
+
+    const quantidadeDias =
+        tempo /
+        (1000 * 60 * 60 * 24);
+
+
+    if (quantidadeDias <= 0) {
+
+        valorTotal.value = "";
+
+        valorTotalVisual.value =
+            "Data inválida";
+
+        btnConfirmar.disabled = true;
+
+        return;
+
+    }
+
+
+    const total =
+        precoDiaria *
+        quantidadeDias;
+
+
+    valorTotal.value =
+        total.toFixed(2);
+
+
+    valorTotalVisual.value =
+        "R$ " +
+        total
+            .toFixed(2)
+            .replace(".", ",");
+
+
+    btnConfirmar.disabled = false;
+
+}
+
+
+/* ================================
+   ATUALIZA TOTAL
+================================ */
+
+checkin.addEventListener(
+    "change",
+    calcularTotal
+);
+
+
+checkout.addEventListener(
+    "change",
+    calcularTotal
+);
+
+
+/* ================================
+   ENVIO DO FORMULÁRIO
+================================ */
+
+document.getElementById(
+    "formReserva"
+).addEventListener(
+    "submit",
+    function(event) {
+
+        atualizarIdadesHidden();
+
+        /*
+            Se houver crianças, garante
+            que todas as idades foram informadas.
+        */
+
+        if (
+            temCriancas.value === "sim"
+        ) {
+
+            const quantidade =
+                Number(
+                    quantidadeCriancas.value
+                );
+
+            const campos =
+                document.querySelectorAll(
+                    ".idade-crianca"
+                );
+
+
+            if (
+                quantidade <= 0 ||
+                campos.length !== quantidade
+            ) {
+
+                event.preventDefault();
+
+                alert(
+                    "Informe a quantidade de crianças e a idade de todas elas."
+                );
+
+                return;
+
+            }
+
+
+            for (const campo of campos) {
+
+                if (campo.value === "") {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Informe a idade de todas as crianças."
+                    );
+
+                    campo.focus();
+
+                    return;
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

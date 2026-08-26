@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel ByGirls</title>
+
+    <link rel="stylesheet" href="/static/estilo.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🏨 Hotel ByGirls</h1>
+
+{% if 'usuario' not in session %}
+
+<div class="menu-button-container">
+    <a href="/usuario" class="menu-button">
+        Cadastrar Usuário
+    </a>
+</div>
+
+<div class="menu-button-container">
+    <a href="/loginusuario" class="menu-button">
+        Login
+    </a>
+</div>
+
+{% else %}
+
+<h3>Bem-vindo(a), {{ session['usuario'] }}</h3>
+
+<div class="menu-button-container">
+    <a href="/cadreserva" class="menu-button">
+        Fazer Reserva
+    </a>
+</div>
+
+<div class="menu-button-container">
+    <a href="/consultareserva" class="menu-button">
+        Consultar Reservas
+    </a>
+</div>
+
+<div class="menu-button-container">
+    <a href="/logout" class="menu-button">
+        Sair
+    </a>
+</div>
+
+{% endif %}
+
+</body>
+
+</html>
+
