@@ -8,9 +8,59 @@
 </head>
 <body>
 
-<div class="container container-large">
+<div class="container">
+
     <h1>Hotel ByGirls</h1>
     <h2>Consulta de Reservas</h2>
+
+    {% if reservas %}
+
+    <table class="tabela">
+
+        <thead>
+            <tr>
+                <th>Hóspede</th>
+                <th>Check-in</th>
+                <th>Check-out</th>
+                <th>Hóspedes</th>
+                <th>Quarto</th>
+                <th>Observações</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for reserva in reservas %}
+
+            <tr>
+
+                <td>{{ reserva.nome }}</td>
+
+                <td>{{ reserva.checkin }}</td>
+
+                <td>{{ reserva.checkout }}</td>
+
+                <td>{{ reserva.hospedes }}</td>
+
+                <td>{{ reserva.tipoQuarto }}</td>
+
+                <td>{{ reserva.observacoes or ''}}</td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+        <div class="mensagem-erro">
+            Nenhuma reserva cadastrada.
+        </div>
+
+    {% endif %}
 
     {% if mensagem_erro %}
         <div class="mensagem-erro">
@@ -18,46 +68,20 @@
         </div>
     {% endif %}
 
-    {% if reservas %}
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hóspede</th>
-                        <th>Check-in</th>
-                        <th>Check-out</th>
-                        <th>Hóspedes</th>
-                        <th>Crianças</th>
-                        <th>Quarto</th>
-                        <th>Diária</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in reservas %}
-                    <tr>
-                        <td>{{ r.nome }}</td>
-                        <td>{{ r.checkin.strftime('%d/%m/%Y') if r.checkin else r.checkin }}</td>
-                        <td>{{ r.checkout.strftime('%d/%m/%Y') if r.checkout else r.checkout }}</td>
-                        <td>{{ r.hospedes }}</td>
-                        <td>{{ r.criancas }}</td>
-                        <td>{{ r.quarto }}</td>
-                        <td>R$ {{ "%.2f"|format(r.valorDiaria)|replace('.', ',') }}</td>
-                        <td>R$ {{ "%.2f"|format(r.valorTotal)|replace('.', ',') }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <p class="subtitulo">Nenhuma reserva cadastrada.</p>
-    {% endif %}
-
     <div class="button-container">
-        <a href="/cadreserva" class="menu-button">Nova Reserva</a>
-        <a href="/" class="menu-button">Voltar ao Menu</a>
+
+        <a href="/cadreserva" class="menu-button">
+            Nova Reserva
+        </a>
+
+        <a href="/" class="menu-button">
+            Voltar ao Menu
+        </a>
+
     </div>
+
 </div>
 
 </body>
 </html>
+
