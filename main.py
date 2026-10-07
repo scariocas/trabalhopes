@@ -1,19 +1,15 @@
 from flask import Flask, render_template, request, redirect, session
-from database import get_db_connection  #Importa a função de conexão com o banco de dados#
-from datetime import date
+from database import get_db_connection
 
-# Cria uma instância da aplicação Flask
 app = Flask(__name__)
 
 app.secret_key = 'senhasecreta'
 
 
-# Rota principal que exibe o menu
 @app.route('/')
 def index():
     return render_template('menu.html', titulo="Hotel ByGirls")
 
-#rota para cadastro de usuario
 @app.route('/usuario', methods=['GET', 'POST'])
 def usuario():
 
@@ -56,7 +52,6 @@ def usuario():
 
     return render_template("usuario.html")
 
-#rota para login do usuario
 @app.route('/loginusuario', methods=['GET','POST'])
 def login():
 
@@ -65,11 +60,9 @@ def login():
         email = request.form['email']
         senha = request.form['senha']
 
-
         conn = get_db_connection()
 
         cursor = conn.cursor(dictionary=True)
-
 
         cursor.execute("""
             SELECT *
@@ -78,21 +71,14 @@ def login():
         """,
         (email, senha))
 
-
         usuario = cursor.fetchone()
-
 
         conn.close()
 
-
         if usuario:
-
             session['usuario'] = usuario['nome']
             session['idUsuario'] = usuario['idUsuario']
-
-
             return redirect('/')
-
 
         else:
 
@@ -122,6 +108,7 @@ def cadreserva():
         valorDiaria = request.form['valorDiaria']
         valorTotal = request.form['valorTotal']
         observacoes = request.form.get('observacoes','')
+        metododepagamento = request.form.get('metododepagamento')
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -130,8 +117,8 @@ def cadreserva():
 
             cursor.execute("""
                 INSERT INTO reserva
-                (idUsuario, checkin, checkout, hospedes, quarto, valorDiaria, valorTotal, observacoes)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+                (idUsuario, checkin, checkout, hospedes, quarto, valorDiaria, valorTotal, observacoes, metododepagamento)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
             """,
             (
             id_usuario,
@@ -141,7 +128,8 @@ def cadreserva():
             quarto,
             valorDiaria,
             valorTotal,
-            observacoes
+            observacoes,
+            metododepagamento
             ))
 
 
@@ -169,7 +157,6 @@ def cadreserva():
 
     return render_template("cadreserva.html")
 
-#rota para consulta de cadastro de reserva
 @app.route('/consultareserva')
 def consultareserva():
 
@@ -180,19 +167,22 @@ def consultareserva():
         cursor.execute("""
             SELECT
                 u.nome,
+                r.IdReserva AS idReserva,
                 r.checkin,
                 r.checkout,
                 r.hospedes,
                 r.quarto,
-                r.observacoes
+                r.observacoes,
+                r.metododepagamento,
+                r.cancelada
             FROM reserva r
             INNER JOIN usuario u
                 ON r.idUsuario = u.idUsuario
+            WHERE r.cancelada = 0 OR r.cancelada IS NULL
             ORDER BY r.checkin
         """)
 
         reservas = cursor.fetchall()
-
         conn.close()
 
         return render_template(
@@ -205,15 +195,42 @@ def consultareserva():
             "consultareserva.html",
             mensagem_erro=str(e)
         )
-#rota para sair do login
+
+
+
+@app.route('/cancelar_reserva', methods=['POST'])
+def cancelar_reserva():
+    id_reserva = request.form.get('idReserva')
+
+    print(f"\n[DEBUG] ID da reserva recebido: {id_reserva}")
+
+    if id_reserva:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""
+            UPDATE reserva 
+            SET cancelada = 1, dataCancelamento = CURDATE() 
+            WHERE idReserva = %s
+            """, (id_reserva,))
+            conn.commit()
+            print(f"SUCESSO")
+        except Exception as e:
+            conn.rollback()
+            print(f"ERRO")
+        finally:
+            conn.close()
+    else:
+        print("[DEBUG] ERRO: O idReserva veio VAZIO do formulário HTML!")
+
+    return redirect('/consultareserva')
+
 @app.route('/logout')
 def logout():
 
-    session.clear()   # Remove os dados da sessão
+    session.clear()
 
     return redirect('/')
 
-# Ponto de entrada da aplicação
 if __name__ == '__main__':
-    # Inicia o servidor Flask em modo de desenvolvimento
     app.run(debug=True)

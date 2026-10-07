@@ -25,6 +25,8 @@
                 <th>Hóspedes</th>
                 <th>Quarto</th>
                 <th>Observações</th>
+                <th>Metodo de pagamento</th>
+                <th></th>
             </tr>
         </thead>
 
@@ -42,12 +44,25 @@
 
                 <td>{{ reserva.hospedes }}</td>
 
-                <td>{{ reserva.tipoQuarto }}</td>
+                <td>{{ reserva.quarto }}</td>
 
                 <td>{{ reserva.observacoes or ''}}</td>
 
-            </tr>
+                <td>{{ reserva.metododepagamento }}</td>
 
+                <td>
+                {% if reserva.cancelada == 1 %}
+                    <span style="color: #dc3545; font-weight: bold;">Cancelada</span>
+                {% else %}
+                    <form action="/cancelar_reserva" method="POST" style="margin: 0;" onsubmit="return confirm('Tem certeza que deseja cancelar esta reserva?');">
+                        <input type="hidden" name="idReserva" value="{{ reserva.idReserva }}">
+                        <button type="submit" style="background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+                            Cancelar
+                        </button>
+                    </form>
+                    {% endif %}
+                </td>
+            </tr>
             {% endfor %}
 
         </tbody>

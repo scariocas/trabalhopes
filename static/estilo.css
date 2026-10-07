@@ -22,14 +22,9 @@
 
 body{
 
-    background:
+    background:#0F4C81;
 
-    linear-gradient(
-        rgba(15,76,129,0.55),
-        rgba(15,76,129,0.55)
-    ),
-
-    url("/static/imagens/hotel.jpg");
+/*    url("/static/imagens/hotel.jpg"); */
 
 
     background-size:cover;
@@ -43,34 +38,30 @@ body{
 
     width:100%;
 
-
     display:flex;
 
-    justify-content:center;
+    justify-content:left;
 
     align-items:center;
 
+    padding:80px;
 
     font-family:'Segoe UI', Arial, sans-serif;
 
 }
 
 
-/* ===========================
-   CAIXA CENTRAL
-============================= */
+/*CAIXA DE BOTÕES */
 
 .container{
 
     width:95%;
 
-    max-width: 800px;
+    max-width: 900px;
 
     background: white;
 
     padding:40px;
-
-    border-radius:20px;
 
     box-shadow:0 10px 30px rgba(0,0,0,0.25);
 
@@ -81,9 +72,7 @@ body{
 }
 
 
-/* ===========================
-   TÍTULOS
-============================= */
+/*TÍTULOS*/
 
 .container h1{
 
@@ -114,9 +103,7 @@ body{
 }
 
 
-/* ===========================
-   BOTÕES DO MENU
-============================= */
+/*BOTÕES DO MENU*/
 
 .menu-button-container{
 
@@ -143,7 +130,7 @@ body{
 
     text-decoration:none;
 
-    border-radius:10px;
+    border-radius:5px;
 
     font-size:17px;
 
@@ -163,9 +150,7 @@ body{
 }
 
 
-/* ===========================
-   FORMULÁRIOS
-============================= */
+/*FORMULÁRIOS*/
 
 form{
 
@@ -229,9 +214,7 @@ textarea:focus{
 }
 
 
-/* ===========================
-   BOTÕES DOS FORMULÁRIOS
-============================= */
+/*BOTÕES DOS FORMULÁRIOS*/
 
 button{
 
@@ -265,9 +248,7 @@ button:hover{
 }
 
 
-/* ===========================
-   VOLTAR AO MENU
-============================= */
+/*VOLTAR AO MENU*/
 
 .button-container{
 
@@ -284,9 +265,7 @@ button:hover{
 }
 
 
-/* ===========================
-   MENSAGENS
-============================= */
+/*MENSAGENS*/
 
 .mensagem-sucesso{
 
@@ -318,9 +297,7 @@ button:hover{
 }
 
 
-/* ===========================
-   TABELA DE RESERVAS
-============================= */
+/*TABELA DE RESERVAS*/
 
 table{
 
@@ -367,9 +344,7 @@ tr:nth-child(even){
 }
 
 
-/* ===========================
-   RESPONSIVIDADE
-============================= */
+/*RESPONSIVIDADE*/
 
 @media(max-width:600px){
 
